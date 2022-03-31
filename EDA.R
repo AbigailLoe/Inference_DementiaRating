@@ -33,6 +33,48 @@ ct$p.value ## not independent
 
 
 
+names(dementia)<-tolower(names(dementia))
+prop.table(table(dementia$maristat, dementia$sex))
+#lit review indicated that widowhood and female gender might have a large
+#role in the decline of mental acuity.
+
+prop.table(table(dementia$maristat, dementia$cdr))
+
+
+prop.table(table(dementia$sex, dementia$cdr))
+
+#widowed women with cdr
+widowedWomen<-which(dementia$sex=="Female" & 
+                      dementia$maristat=="Widowed")
+widowedMen<-which(dementia$sex=="Male" & 
+                    dementia$maristat=="Widowed")
+
+prop.table(table(dementia[widowedWomen, ]$cdr))
+prop.table(table(dementia[-widowedWomen, ]$cdr))
+#interesting.
+
+prop.table(table(dementia[widowedMen, ]$cdr))
+prop.table(table(dementia[-widowedMen, ]$cdr))
+
+unmarriedMen<-which(dementia$sex=="Male" & 
+                      dementia$maristat=="Never married")
+
+unmarriedWomen<-which(dementia$sex=="Female" & 
+                      dementia$maristat=="Never married")
+
+prop.table(table(dementia[unmarriedMen, ]$cdr))
+prop.table(table(dementia[-unmarriedMen, ]$cdr))
+
+
+prop.table(table(dementia[unmarriedWomen, ]$cdr))
+prop.table(table(dementia[-unmarriedWomen, ]$cdr))
+#women who have been married have higher rates of dementia
+#marriage does tend to confer a lot of social benefits for men
+#and for women, but does disproportionately tend to harm women
+
+
+
+
 
 
 
