@@ -172,13 +172,68 @@ We might want to add a few more without education according to lit. review
 
 
 ```{r}
-summary(vglm(formula = CDR_ord ~ EDUC_cat + SEX + Marriage + DEP + FEVALAGE + 
+model<-vglm(formula = CDR_ord ~ EDUC_cat + SEX + Marriage + DEP + FEVALAGE + 
     RES_PRIVATE + EDUC_cat:RES_PRIVATE, family = cumulative("logitlink", 
-    parallel = T), data = df))
+    parallel = T), data = df, refvalue="0.5")
+summary(model)
+
 ```
 
 
 
+
+# Goodness of Fit
+
+```{r}
+anova.vglm(model)
+
+m.aic<-AIC(model)
+nullModel<-vglm(formula = CDR_ord ~ 1, family = cumulative("logitlink", 
+    parallel = T), data = df)
+n.aic<-AIC(nullModel)
+deviance(model)
+m.aic;n.aic
+```
+
+
+
+# testing proportionality assumption:
+
+```{r}
+proportionModel<-model
+notpropModel<-vglm(formula = CDR_ord ~ EDUC_cat + SEX + Marriage + DEP + FEVALAGE +
+    RES_PRIVATE + EDUC_cat:RES_PRIVATE, family = cumulative("logitlink", 
+    parallel = F), data = df)
+summary(notpropModel)
+1785-1774
+2*(logLik(model)-logLik(notpropModel))
+1-pchisq(2*(logLik(model)-logLik(notpropModel)),11)
+#prefer the full model. a 0 p-value
+lrtest_vglm(model, notpropModel)
+#confirmed. we reject the hypothesis that proportionality is a reasonable assumption
+```
+
+The LRT test of the proportional odds model and the non-proportional odds model indicates that we prefer the non-proportional odds model (or at least, there is evidence that the proportional assumption has been violated in the proportional odds model).
+
+
+
+```{r}
+propModel<-vglm(formula = CDR_ord ~ EDUC_cat + SEX + Marriage + DEP + FEVALAGE +
+    RES_PRIVATE, family = cumulative("logitlink", 
+    parallel = T), data = df,refvalue="0.0")
+notpropModel<-vglm(formula = CDR_ord ~ EDUC_cat + SEX + Marriage + DEP + FEVALAGE +
+    RES_PRIVATE, family = cumulative("logitlink", 
+    parallel = F), data = df)
+summary(notpropModel)
+1785-1774
+2*(logLik(model)-logLik(notpropModel))
+1-pchisq(2*(logLik(model)-logLik(notpropModel)),11)
+#prefer the full model. a 0 p-value
+lrtest_vglm(propModel, notpropModel)
+```
+
+
+The interaction has no difference in the
 
 
 
